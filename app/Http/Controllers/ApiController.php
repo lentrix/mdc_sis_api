@@ -26,17 +26,37 @@ class ApiController extends Controller
         $data = [];
 
         foreach ($section->subEnrols as $s) {
-            $data[] = [
-                'idnum' => $s->idnum,
-                'section_id' => $s->class_code,
-                'lastName' => $s->studInfo->lname,
-                'firstName' => $s->studInfo->fname,
-                'course' => $s->studEnrol()->theCourse->cr_acrnm,
-                'year' => $s->studEnrol()->year
-            ];
+            if ($stEn = $s->studEnrol()) {
+                $data[] = [
+                    'idnum' => $s->idnum,
+                    'section_id' => $s->class_code,
+                    'lastName' => $s->studInfo->lname,
+                    'firstName' => $s->studInfo->fname,
+                    'course' => $stEn->theCourse->cr_acrnm,
+                    'year' => $s->studEnrol()->year
+                ];
+            }
         }
 
 
         return json_encode($data);
+    }
+
+    public function semesterList($sem_code) {
+        $list = \App\StudEnrol::where('sem_code', $sem_code)
+                ->with('studInfo')
+                ->with('theCourse')
+                ->get()->map(function($item, $key){
+                    return [
+                        'idnum' => $item->idnum,
+                        'lname' => $item->studInfo->lname,
+                        'fname' => $item->studInfo->fname,
+                        'cr_acrnm' => $item->theCourse->cr_acrnm,
+                        'year' => $item->year
+                    ];
+                });
+
+        return response()
+                ->json(['data'=>$list]);
     }
 }

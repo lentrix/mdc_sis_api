@@ -21,6 +21,8 @@ class SubEnrol extends Model
     public function studEnrol()
     {
         return StudEnrol::where('idnum', $this->idnum)
-            ->where('sem_code', $this->sem_code)->first();
+            ->where('sem_code', $this->sem_code)
+            ->where('en_status', '<>', 'withdrawn')
+            ->first();
     }
 }

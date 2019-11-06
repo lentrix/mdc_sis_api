@@ -20,3 +20,5 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::get('/section/{class_code}', 'ApiController@getSection');
 
 Route::get('/studlist/{class_code}', 'ApiController@sectionList');
+
+Route::get('/sem/studlist/{sem_code}', 'ApiController@semesterList');
